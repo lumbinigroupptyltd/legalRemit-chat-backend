@@ -19,13 +19,29 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import java.io.IOException;
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUserDetailsService userDetailsService;
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final JwtService jwtService;
+
+    // ✅ SKIP JWT FOR PUBLIC ENDPOINTS
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+
+        String path = request.getServletPath();
+
+        return path.startsWith("/auth/")
+                || path.startsWith("/app/")                 // ChatController (WebSocket)
+                || path.startsWith("/api/v1/rooms/")        // RoomController
+                || path.startsWith("/ws-chat/")             // websocket handshake
+                || path.startsWith("/topic/")
+                || path.startsWith("/message")
+                || path.startsWith("/queue/")
+                || path.startsWith("/actuator/");
+    }
 
 
     @Override

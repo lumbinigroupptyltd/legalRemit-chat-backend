@@ -36,4 +36,8 @@ public class Message {
     private boolean deleted = false;
 
     private LocalDateTime timeStamp = LocalDateTime.now();
+
+    private LocalDateTime updatedAt;
+
+    private boolean edited = false;
 }

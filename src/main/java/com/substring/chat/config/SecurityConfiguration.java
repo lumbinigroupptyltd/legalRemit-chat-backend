@@ -30,6 +30,7 @@ public class SecurityConfiguration {
     public static final String[] PUBLIC_URLS = {
             "/",
             "/auth/**",
+            "/app/**",
             "/actuator/**",
             "/api/report/**",
             "/ws-chat/**",
@@ -49,15 +50,28 @@ public class SecurityConfiguration {
         return new JwtUserDetailsService();
     }
     @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())   // use global CORS config
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()      // allow all endpoints
-                )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()// allow all endpoints
                 );
         return http.build();
     }
@@ -83,11 +97,5 @@ public class SecurityConfiguration {
 //        return http.build();
 //    }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
-    }
+
 }
