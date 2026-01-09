@@ -6,9 +6,8 @@ import com.substring.chat.playload.MessageUpdateRequest;
 
 public interface MessageService {
 
-    Message update(String messageId, MessageUpdateRequest updateRequest);
+    Message edit(String messageId, MessageUpdateRequest updateRequest);
 
-
-
+    String delete(String messageId);
 
 }

@@ -53,6 +53,7 @@ public class ChatController {
         message.setStatus(MessageStatus.SENT);
         message.setDeleted(false);
         message.setTimeStamp(LocalDateTime.now());
+        message.setUpdatedAt(LocalDateTime.now());
 
         messageRepository.save(message);
         return message;
@@ -70,6 +71,7 @@ public class ChatController {
         message.setContent(request.getContent());
         message.setStatus(MessageStatus.SENT);
         message.setTimeStamp(LocalDateTime.now());
+        message.setUpdatedAt(LocalDateTime.now());
 
         messageRepository.save(message);
 
@@ -90,6 +92,7 @@ public class ChatController {
         message.setContent(request.getContent());
         message.setStatus(MessageStatus.SENT);
         message.setTimeStamp(LocalDateTime.now());
+        message.setUpdatedAt(LocalDateTime.now());
 
         messagingTemplate.convertAndSendToUser(
                 request.getReceiver(),

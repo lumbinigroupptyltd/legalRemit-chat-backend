@@ -19,16 +19,21 @@ public class MessageServiceImpl implements MessageService {
 
 
     @Override
-    public Message update(String messageId, MessageUpdateRequest updateRequest) {
+    public Message edit(String messageId, MessageUpdateRequest updateRequest) {
 
         // Find the existing message
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new RuntimeException("Message not found with id: " + messageId));
 
-//        // Validate sender (optional, but recommended for security)
-//        if (!message.getSender().equals(updateRequest.getSender())) {
-//            throw new RuntimeException("Unauthorized: You can only update your own messages");
-//        }
+        //Check if the message is flagged deleted or not
+        if(message.isDeleted()){
+            throw new RuntimeException("You cannot edit deleted message");
+        }
+
+        // Validate sender (optional, but recommended for security)
+        if (!message.getSender().equals(updateRequest.getSender())) {
+            throw new RuntimeException("Unauthorized: You can only update your own messages");
+        }
 
         // Update message content
         message.setContent(updateRequest.getContent());
@@ -40,5 +45,17 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.save(message);
     }
 
+    @Override
+    public String delete(String messageId) {
+
+        Message message= messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found with id: " + messageId));
+
+        message.setDeleted(true);
+
+        messageRepository.save(message);
+        return "Message deleted successfully.";
+
+    }
 
 }

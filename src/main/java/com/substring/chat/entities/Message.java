@@ -27,7 +27,7 @@ public class Message {
     @Column(nullable = false)
     private String sender;
 
-    @Column(nullable = false, length = 2000)
+    @Column(nullable=false,length = 2000)
     private String content;
 
     @Enumerated(EnumType.STRING)
